@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model dt_abutment {
+  id         Int        @id @default(autoincrement())
+  fixture_id Int
+  createAt   DateTime
+  updateAt   DateTime
+  deleteAt   DateTime
+  dt_fixture dt_fixture @relation(fields: [fixture_id], references: [id], onUpdate: NoAction)
+}
+
+model dt_all_on_x {
+  id          Int        @id @default(autoincrement())
+  fixture_id  Int
+  occlusal    String     @db.VarChar(50)
+  shape       Int
+  front_shade Int
+  back_shade  Int
+  gum_color   Int
+  createAt    DateTime
+  updateAt    DateTime
+  deleteAt    DateTime
+  dt_fixture  dt_fixture @relation(fields: [fixture_id], references: [id], onUpdate: NoAction)
+}
+
+model dt_company {
+  id              Int      @id(map: "PK__dt_compa__3E267235B89C1D7C") @default(autoincrement())
+  name            String   @db.NVarChar(100)
+  address         String?  @db.NVarChar(300)
+  business_number String?  @db.NVarChar(24)
+  file_id         Int?
+  dt_file         dt_file? @relation(fields: [file_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK__dt_compan__file___3C69FB99")
+}
+
+model dt_crown {
+  id                Int        @id @default(autoincrement())
+  fixture_id        Int
+  occlusal          String     @db.VarChar(50)
+  shape             Int
+  front_shade       Int
+  back_shade        Int
+  abutment_size     Int
+  aubtment_shape    Int
+  aubtment_retneion Int
+  createAt          DateTime
+  updateAt          DateTime
+  deleteAt          DateTime
+  dt_fixture        dt_fixture @relation(fields: [fixture_id], references: [id], onUpdate: NoAction)
+}
+
+model dt_file {
+  id            Int          @id(map: "PK__dt_file__07D884C65CE7560C") @default(autoincrement())
+  file_location String?      @db.NVarChar(Max)
+  dt_company    dt_company[]
+}
+
+model dt_fixture {
+  id          Int           @id @default(autoincrement())
+  company     String        @db.VarChar(50)
+  type1       String        @db.VarChar(50)
+  type2       String        @db.VarChar(50)
+  size        String        @db.VarChar(50)
+  createAt    DateTime
+  updateAt    DateTime
+  deleteAt    DateTime
+  dt_abutment dt_abutment[]
+  dt_all_on_x dt_all_on_x[]
+  dt_crown    dt_crown[]
+}
+
+model dt_user {
+  id       Int    @id(map: "PK__dt_user__B9BE370FA04F46BD") @default(autoincrement())
+  username String @db.VarChar(50)
+  password String @db.VarChar(50)
+  name     String @db.NVarChar(100)
+  auth     Int    @db.TinyInt
+}
+
+model performance_test {
+  idx             Int      @id(map: "PK__performa__DC501A7896669934") @default(autoincrement())
+  title           String   @db.NVarChar(100)
+  content         String   @db.NVarChar(Max)
+  writer          Int
+  create_datetime DateTime @db.DateTime
+}
